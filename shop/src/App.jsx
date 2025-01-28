@@ -4,7 +4,7 @@ import Wishlist from "./pages/Wishlist";
 import Home from "./pages/Home";
 import Signup from "./pages/Signup";
 import About from "./pages/About";
-import User from "./pages/User";
+import User from "./pages/User.jsx";
 import Contact from "./pages/Contact";
 import Navbar from "./components/Navigation/Navbar.jsx";
 import Footer from "./components/Navigation/Footer.jsx";
