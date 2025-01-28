@@ -16,9 +16,8 @@ connectCloudinary()
 
 app.use(express.json())
 app.use(cors({
-    origin:["http://localhost:5173","https://shoopers.netlify.app"]
-}))
-
+    origin: process.env.CLIENT_URL || 'https://shoopers.netlify.app' // Set to your frontend URL
+  }));
 //api end point
 app.use("/api/user", userRouter)
 app.use("/api/product", productRouter)
