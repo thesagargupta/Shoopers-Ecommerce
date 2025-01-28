@@ -1,12 +1,4 @@
-[build]
-  publish = "dist"  # Ensure this matches the folder where your build outputs
-  command = "npm run build"
-
-[build.environment]
-  NODE_VERSION = "20"  # If you're using Node >=20.0.0
-
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  force = true  # Optional: ensures that the redirect is always applied
