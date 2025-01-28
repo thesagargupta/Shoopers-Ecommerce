@@ -1,7 +1,7 @@
 [build]
-  base = "/opt/build/repo/shop"  # Corrected path without the extra /opt/build/repo/
-  command = "npm run build"
-  publish = "/opt/build/repo/shop/build"  # Ensure this matches the build output directory
+  base = "/opt/build/repo/shop"  # Path to the base directory of the project
+  command = "npm run build"  # Command to run for building the site
+  publish = "/opt/build/repo/shop/build"  # Path to the build output directory
 
 [[redirects]]
   from = "/*"
