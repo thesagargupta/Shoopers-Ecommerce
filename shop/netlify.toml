@@ -1,9 +1,9 @@
 [build]
-  base = "/opt/build/repo/shop"
-  command = "npm run build"
-  publish = "/opt/build/repo/shop/build"  # Update this if your build output is different
+  base = "shop"             # Path to the directory containing your source code
+  command = "npm run build"  # Command to build your project
+  publish = "shop/build"     # Output directory to deploy
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+  from = "/*"               # Redirect all traffic
+  to = "/index.html"        # Send it to index.html
+  status = 200              # Status code for successful redirect
