@@ -4,13 +4,14 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: 'build', // This ensures the build directory is created as 'build'
+    // Ensure the build output directory is 'shop/build' (or adjust to your needs)
+    outDir: 'shop/build', // This ensures the build output is inside 'shop/build'
   },
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:9001", // The backend server you're targeting
-        changeOrigin: true, // Modifies the origin of the request to the target URL
+        target: "http://localhost:9001", // Your backend API
+        changeOrigin: true,
       },
     },
   },
