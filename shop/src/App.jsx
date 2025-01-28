@@ -6,7 +6,7 @@ import Signup from "./pages/Signup";
 import About from "./pages/About";
 import User from "./pages/User";
 import Contact from "./pages/Contact";
-import Navbar from "./components/Navbar/Navbar";
+import Navbar from "./components/Navbar/Navbar.jsx";
 import Footer from "./components/Navbar/Footer";
 import Cart from "./pages/Cart";
 import "bootstrap/dist/css/bootstrap.min.css";
