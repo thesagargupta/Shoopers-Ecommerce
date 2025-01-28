@@ -1,3 +1,8 @@
+[build]
+  base = "/opt/build/repo/shop"
+  command = "npm run build"
+  publish = "/opt/build/repo/shop/build"  # Update this if your build output is different
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
