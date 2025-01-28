@@ -23,7 +23,10 @@ app.use("/api/user", userRouter)
 app.use("/api/product", productRouter)
 app.use("/api/cart",cartRouter)
 app.get("/", (req, res) => {
-    res.send("api working")
+    res.send({
+        activeStatus: true,
+        error:false,
+    })
 })
 
 app.listen(port, () =>console.log("port listening " + port))
