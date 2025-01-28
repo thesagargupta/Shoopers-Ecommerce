@@ -15,9 +15,13 @@ connectCloudinary()
 // middleware
 
 app.use(express.json())
-app.use(cors({
-    origin: process.env.CLIENT_URL || 'https://shoopers.netlify.app' // Set to your frontend URL
-  }));
+const corsOptions = {
+    origin: 'https://shoopers.netlify.app', // Replace with your Netlify URL
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // Allow cookies or auth headers
+};
+app.use(cors(corsOptions))
+
 //api end point
 app.use("/api/user", userRouter)
 app.use("/api/product", productRouter)
@@ -25,7 +29,7 @@ app.use("/api/cart",cartRouter)
 app.get("/", (req, res) => {
     res.send({
         activeStatus: true,
-        error:false,
+        error:false
     })
 })
 
