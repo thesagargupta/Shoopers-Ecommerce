@@ -1,7 +1,7 @@
 [build]
   base = "shop"             # Path to the directory containing your source code
   command = "npm run build"  # Command to build your project
-  publish = "shop/build"     # Output directory to deploy
+  publish = "shop/build"     # Correct output directory for deployment
 
 [[redirects]]
   from = "/*"               # Redirect all traffic
