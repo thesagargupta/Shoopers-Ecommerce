@@ -16,9 +16,7 @@ connectCloudinary()
 
 app.use(express.json())
 const corsOptions = {
-    origin: 'https://shoopers.netlify.app', // Replace with your Netlify URL
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true, // Allow cookies or auth headers
+    origin: 'https://shoopers.netlify.app' // Replace with your Netlify URL
 };
 app.use(cors(corsOptions))
 
