@@ -1,6 +1,7 @@
 import "./Contact.css";
 import { LuPhoneCall } from "react-icons/lu";
 import { TfiEmail } from "react-icons/tfi";
+import React from 'react';
 
 const Contact = () => {
   const handleSubmit = (event) => {

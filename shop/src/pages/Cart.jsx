@@ -1,6 +1,7 @@
 import Cart_Items from './Cart_Items'; 
 import { NavLink } from "react-router-dom";
 import "./Cart.css"
+import React from 'react';
 
 
 const Cart = () => {

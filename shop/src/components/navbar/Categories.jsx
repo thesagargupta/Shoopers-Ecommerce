@@ -8,7 +8,7 @@ import { FaHeadphones } from "react-icons/fa";
 import { FaCamera } from "react-icons/fa";
 import { IoHome } from "react-icons/io5";
 import { IoGameController } from "react-icons/io5";
-
+import React from 'react';
 
 const Categories = () => {
   const handleLinkClick = () => {

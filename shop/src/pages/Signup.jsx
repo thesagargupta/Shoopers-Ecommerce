@@ -5,6 +5,7 @@ import googleLogo from "../assets/googlw.png";
 import { ShopContext } from "../context/ShopContext";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+import React from 'react';
 
 
 const Signup = () => {

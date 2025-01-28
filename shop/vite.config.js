@@ -3,14 +3,12 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
-  build: {
-    // Ensure the build output directory is 'shop/build' (or adjust to your needs)
-    outDir: 'shop/build', // This ensures the build output is inside 'shop/build'
-  },
   server: {
+    host: "0.0.0.0", // Allow access to the dev server from other devices
+    port: 5173, // You can set a specific port if needed
     proxy: {
       "/api": {
-        target: "http://localhost:9001", // Your backend API
+        target: "http://localhost:9001",
         changeOrigin: true,
       },
     },

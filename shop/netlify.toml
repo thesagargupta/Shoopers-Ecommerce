@@ -1,11 +1,4 @@
-# Build settings
-[build]
-  base = "/opt/build/repo/shop"  # Correct directory path for your project
-  command = "npm run build"      # Command to run for building the site
-  publish = "/opt/build/repo/shop/build"  # Directory where the build output is located
-
-# Redirects settings
 [[redirects]]
-  from = "/*"          # Redirect all requests
-  to = "/index.html"   # Send them to index.html (for single-page apps)
-  status = 200         # HTTP status code for the redirect
+  from = "/*"
+  to = "/index.html"
+  status = 200

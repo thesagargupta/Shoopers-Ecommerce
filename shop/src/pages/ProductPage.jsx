@@ -4,6 +4,7 @@ import Breadcrumbs from "./Breadcrumbs";
 import { FaHeart, FaShoppingCart, FaShoppingBag, FaStar } from "react-icons/fa";
 import { TbTruckDelivery } from "react-icons/tb";
 import { GiReturnArrow } from "react-icons/gi";
+import React from 'react';
 import "./ProductPage.css";
 import Suggestion from "./Suggestion";
 import { ShopContext } from "../context/ShopContext";

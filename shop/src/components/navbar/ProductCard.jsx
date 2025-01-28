@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import './ProductCard.css';
 import PropTypes from 'prop-types';
 import { ShopContext } from "../../context/ShopContext";
-
+import React from 'react';
 
 
 const ProductCard = ({ product }) => {

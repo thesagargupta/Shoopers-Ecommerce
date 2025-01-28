@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import { FaShoppingCart, FaHeart, FaSearch, FaUser, FaBars, FaTimes } from "react-icons/fa";
 import "./Navbar.css";
 import { ShopContext } from "../../context/ShopContext";
+import React from 'react';
 
 
 const Navbar = () => {

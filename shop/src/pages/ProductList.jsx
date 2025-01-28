@@ -8,6 +8,7 @@ import image5 from "../assets/headphone.jpeg";
 import image6 from "../assets/watch.jpeg";
 import image7 from "../assets/mi-band.jpeg";
 import image8 from "../assets/earpods.jpeg";
+import React from 'react';
 
 
 const products = [

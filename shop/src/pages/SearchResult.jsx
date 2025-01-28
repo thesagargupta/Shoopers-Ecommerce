@@ -1,5 +1,6 @@
-import ProductCard from "../components/Navigation/ProductCard";
+import ProductCard from "../components/navbar/ProductCard";
 import "./SearchResult.css";
+import React from 'react';
 import { NavLink } from "react-router-dom";
 import { useContext } from "react";
 import { ShopContext } from "../context/ShopContext"; // Import context to access filtered products
