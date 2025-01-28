@@ -1,4 +1,4 @@
-import ProductCard from "../components/Navbar/ProductCard";
+import ProductCard from "../components/Navigation/ProductCard";
 import "./SearchResult.css";
 import { NavLink } from "react-router-dom";
 import { useContext } from "react";

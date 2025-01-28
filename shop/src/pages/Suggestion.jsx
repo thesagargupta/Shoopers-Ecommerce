@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react'; 
-import ProductCard from '../components/Navbar/ProductCard';
+import ProductCard from '../components/Navigation/ProductCard';
 import { ShopContext } from '../context/ShopContext'; // Import the ShopContext
 
 

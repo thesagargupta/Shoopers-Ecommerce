@@ -5,9 +5,9 @@ import iphoneBan from "../assets/iphone.jpeg";
 import electroBan from "../assets/electronic.jpg";
 import fashion from "../assets/fashion.jpg";
 import banner from "../assets/banner.png";
-import ProductCard from "../components/Navbar/ProductCard";
-import BestSellingProducts from "../components/Navbar/BestSellingProducts";
-import Categories from "../components/Navbar/Categories";
+import ProductCard from "../components/Navigation/ProductCard";
+import BestSellingProducts from "../components/Navigation/BestSellingProducts";
+import Categories from "../components/Navigation/Categories";
 
 
 const Home = () => {
