@@ -3,20 +3,20 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 import "./PlaceOrder.css";
 import { useForm } from "react-hook-form";
-import React from 'react';
-
-
+import toast, { Toaster } from "react-hot-toast";
 const PlaceOrder = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { state } = location || {};
   const { cartItems = {}, finalAmount = 0 } = state || {};
-  const { products } = useContext(ShopContext); // Fetch products from the backend
+  const { products, backendUrl, token, SetCartItem } = useContext(ShopContext); // Fetch products from the backend
   const { register } = useForm();
 
-  // State to store city based on pincode
+  // State to store city and state based on pincode
   const [city, setCity] = useState("");
+  const [stateName, setStateName] = useState("");
   const [manualCity, setManualCity] = useState(false); // State to toggle manual city input
+  const [manualState, setManualState] = useState(false); // State to toggle manual state input
   const [isLoading, setIsLoading] = useState(true); // State to track loading state
 
   // Effect to check loading and navigate if data is unavailable
@@ -37,31 +37,29 @@ const PlaceOrder = () => {
     (product) => cartItems[product._id] > 0 // Use _id from backend data
   );
 
-  const handlePlaceOrder = (e) => {
-    e.preventDefault();
-    alert("Order placed successfully!");
-    navigate("/"); // Navigate to the home page after placing the order
-  };
-
-  // Function to handle pincode input and set city
+  // Function to handle pincode input and set city and state
   const handlePincodeChange = async (e) => {
     const pincode = e.target.value;
 
-    // Call an API (e.g., Zippopotam) to fetch city based on pincode
-    if (pincode.length === 6 && !manualCity) {
-      // Only auto-fill when manual is not selected
+    // Call an API (e.g., Zippopotam) to fetch city and state based on pincode
+    if (pincode.length === 6 && !manualCity && !manualState) {
+      // Only auto-fill when manual input is not selected
       try {
         const response = await fetch(`https://api.zippopotam.us/in/${pincode}`);
         if (response.ok) {
           const data = await response.json();
           const cityName = data.places[0]["place name"];
+          const stateName = data.places[0]["state"];
           setCity(cityName);
+          setStateName(stateName);
         } else {
           setCity(""); // Reset if no city found
+          setStateName(""); // Reset if no state found
         }
       } catch (error) {
-        console.error("Error fetching city:", error);
+        console.error("Error fetching city and state:", error);
         setCity(""); // Reset on error
+        setStateName(""); // Reset on error
       }
     }
   };
@@ -74,6 +72,14 @@ const PlaceOrder = () => {
     }
   };
 
+  // Handle the manual state input toggle
+  const handleManualStateToggle = () => {
+    setManualState(!manualState);
+    if (!manualState) {
+      setStateName(""); // Clear state when toggling to manual input
+    }
+  };
+
   // Helper function to get the first image or a fallback image
   const getProductImages = (product) => {
     const images = Array.isArray(product.image)
@@ -82,8 +88,163 @@ const PlaceOrder = () => {
     return images.length > 0 ? images[0] : "/default-image.png"; // Fallback to a default image if not available
   };
 
+  const onSubmitHandler = async (event) => {
+    event.preventDefault();
+
+    // Start loading toast
+    const loadingToast = toast.loading("Placing your order...");
+
+    // Validate form fields before processing the order
+    const name = event.target.name.value.trim();
+    const phone = event.target.phone.value.trim();
+    const pincode = event.target.pincode.value.trim();
+    const apartment = event.target.apartment.value.trim();
+    const locality = event.target.landmark.value.trim();
+
+    // Validation checks
+    if (!name) {
+      toast.error("Full Name is required!");
+      toast.dismiss(loadingToast);
+      return;
+    }
+    if (!validatePhone(phone)) {
+      toast.error("Please enter a valid phone number!");
+      toast.dismiss(loadingToast);
+      return;
+    }
+    if (!validatePincode(pincode)) {
+      toast.error("Please enter a valid 6-digit pincode!");
+      toast.dismiss(loadingToast);
+      return;
+    }
+    if (!apartment) {
+      toast.error("Apartment/Flat/Landmark is required!");
+      toast.dismiss(loadingToast);
+      return;
+    }
+    if (!locality) {
+      toast.error("Locality is required!");
+      toast.dismiss(loadingToast);
+      return;
+    }
+
+    if (!validateName(name)) {
+      toast.error("Full Name must be at least 5 characters!");
+      toast.dismiss(loadingToast);
+      return;
+    }
+
+    if (!validateAddress(apartment)) {
+      toast.error("Address must be at least 15 characters long!");
+      toast.dismiss(loadingToast);
+      return;
+    }
+
+    const orderItems = [];
+    for (const item in cartItems) {
+      if (cartItems[item] > 0) {
+        const itemInfo = structuredClone(
+          products.find((product) => product._id === item)
+        );
+        if (itemInfo) {
+          itemInfo.quantity = cartItems[item];
+          orderItems.push(itemInfo);
+        }
+      }
+    }
+
+    const paymentMethod = event.target.payment.value;
+
+    // Determine the API endpoint based on the selected payment method
+    let orderUrl = `${backendUrl}/api/order/place`; // Default endpoint for COD
+    if (paymentMethod === "stripe") {
+      orderUrl = `${backendUrl}/api/order/stripe`;
+    } else if (paymentMethod === "razorpay") {
+      orderUrl = `${backendUrl}/api/order/razorpay`;
+    }
+
+    const orderData = {
+      items: orderItems,
+      amount: finalAmount,
+      address: {
+        fullName: name,
+        phoneNumber: phone,
+        pincode: pincode,
+        city: manualCity ? city : stateName,
+        state: manualState ? stateName : city,
+        apartment,
+        locality,
+      },
+      paymentMethod,
+    };
+
+    try {
+      const response = await fetch(orderUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (response.ok) {
+        toast.success("Order placed successfully!");
+
+        // Clear the cart from both state and local storage
+        SetCartItem({});
+        localStorage.removeItem("cartItems");
+
+        // Call the backend API to clear the cart in the database
+        await fetch(`${backendUrl}/api/cart/clear`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        // Navigate to the order confirmation page after clearing the cart
+        setTimeout(() => {
+          navigate("/orders");
+        }, 2000); // Navigate after 2 seconds
+      } else {
+        const errorData = await response.json();
+        toast.error(
+          errorData.message || "Failed to place order. Please try again."
+        );
+      }
+    } catch (error) {
+      toast.error("Error placing order. Please try again.");
+      console.error("Error placing order:", error);
+    } finally {
+      toast.dismiss(loadingToast); // Dismiss the loading toast when request completes
+    }
+  };
+  // Utility functions for validation
+  const validatePhone = (phone) => {
+    const phonePattern = /^[6-9]\d{9}$/;
+    return phonePattern.test(phone);
+  };
+
+  const validatePincode = (pincode) => {
+    const pincodePattern = /^\d{6}$/;
+    return pincodePattern.test(pincode);
+  };
+
+  // Name validation: Ensures minimum 5 characters
+  const validateName = (name) => {
+    return name.trim().length >= 5;
+  };
+
+  const validateAddress = (apartment) => {
+    return apartment.trim().length >= 15;
+  };
+
   return (
     <div className="place-order-container">
+      <Toaster position="top-center" reverseOrder={false} />
+
       <h2 className="page-title">Place Your Order</h2>
 
       <div className="content-wrapper">
@@ -116,7 +277,7 @@ const PlaceOrder = () => {
         {/* Order Form Section */}
         <div className="order-form">
           <h3>Shipping Details</h3>
-          <form onSubmit={handlePlaceOrder}>
+          <form onSubmit={onSubmitHandler}>
             <label htmlFor="name">Full Name:</label>
             <input
               type="text"
@@ -156,7 +317,7 @@ const PlaceOrder = () => {
               placeholder="Enter your apartment/flat/landmark name (if applicable)"
             />
 
-            <label htmlFor="landmark">City:</label>
+            <label htmlFor="landmark">Locality:</label>
             <input
               type="text"
               id="landmark"
@@ -184,14 +345,41 @@ const PlaceOrder = () => {
               </label>
             </div>
 
+            <label htmlFor="state">State:</label>
+            <input
+              type="text"
+              id="state"
+              name="state"
+              value={stateName} // Always bind the state input value to the state
+              placeholder={
+                manualState
+                  ? "Enter your state"
+                  : "State will be auto-filled based on pincode"
+              }
+              onChange={
+                manualState ? (e) => setStateName(e.target.value) : null
+              } // Allow manual state input if selected
+              required
+            />
+
+            <div className="form-check">
+              <input
+                type="checkbox"
+                className="form-check-input"
+                id="manualState"
+                checked={manualState}
+                onChange={handleManualStateToggle}
+              />
+              <label className="form-check-label" htmlFor="manualState">
+                Enter State Manually
+              </label>
+            </div>
+
             <label htmlFor="payment">Prefered Gateway:</label>
             <select id="payment" name="payment" required>
-              <option value="stripe">
-                Stripe
-              </option>
-              <option value="razorpay">
-                Razorpay
-              </option>
+              <option value="cod">Cash On Delivery</option>
+              <option value="stripe">Stripe</option>
+              <option value="razorpay">Razorpay</option>
             </select>
 
             <div className="form-check">

@@ -1,20 +1,22 @@
 import { useState, useEffect, useContext } from "react";
-import { useParams, NavLink } from "react-router-dom";
+import { useParams, NavLink, useNavigate } from "react-router-dom";
 import Breadcrumbs from "./Breadcrumbs";
 import { FaHeart, FaShoppingCart, FaShoppingBag, FaStar } from "react-icons/fa";
 import { TbTruckDelivery } from "react-icons/tb";
 import { GiReturnArrow } from "react-icons/gi";
-import React from 'react';
 import "./ProductPage.css";
 import Suggestion from "./Suggestion";
+import toast, { Toaster } from "react-hot-toast";
 import { ShopContext } from "../context/ShopContext";
 
 const ProductPage = () => {
   const { id } = useParams(); // Get product ID from URL params
   const [product, setProduct] = useState(null); // Product data
   const [isWishlisted, setIsWishlisted] = useState(false); // Wishlist state
-  const { CartItem, AddToCart, RemoveFromCart } = useContext(ShopContext);
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;  // Backend URL from .env file
+  const { CartItem, AddToCart, RemoveFromCart, token } =
+    useContext(ShopContext);
+  const backendUrl = import.meta.env.VITE_BACKEND_URL; // Backend URL from .env file
+  const navigate = useNavigate(); // Use navigate hook to redirect to another route
 
   const quantity = CartItem[id] || 0; // Quantity in the cart for this product
 
@@ -57,10 +59,22 @@ const ProductPage = () => {
     setIsWishlisted((prevState) => !prevState);
   };
 
+  const handleBuyNow = () => {
+    if (!token) {
+      toast.error("Please log in to continue!");
+      setTimeout(() => navigate("/signup"), 1000); // Redirect after 1 second
+    } else {
+      AddToCart(id);
+      navigate("/place-order");
+    }
+  };
+
   if (!product) {
     return (
       <div className="no-product">
-        <p>Product not found. Please check the URL or return to the homepage.</p>
+        <p>
+          Product not found. Please check the URL or return to the homepage.
+        </p>
         <NavLink to="/" className="back-home-link">
           Back to Home
         </NavLink>
@@ -70,8 +84,8 @@ const ProductPage = () => {
 
   return (
     <div className="product-page">
+      <Toaster position="top-center" reverseOrder={false} />
       <Breadcrumbs category={product.category} productName={product.name} />
-
       <div className="product-details">
         {/* Product Gallery */}
         <div className="product-gallery">
@@ -138,7 +152,10 @@ const ProductPage = () => {
               </button>
             ) : (
               <div className="cart-item-quantity">
-                <button className="quantity-btn" onClick={() => RemoveFromCart(id)}>
+                <button
+                  className="quantity-btn"
+                  onClick={() => RemoveFromCart(id)}
+                >
                   -
                 </button>
                 <span>{quantity}</span>
@@ -147,7 +164,7 @@ const ProductPage = () => {
                 </button>
               </div>
             )}
-            <button className="buy-now-btn">
+            <button className="buy-now-btn" onClick={handleBuyNow}>
               <FaShoppingBag className="buy" /> Buy Now
             </button>
           </div>

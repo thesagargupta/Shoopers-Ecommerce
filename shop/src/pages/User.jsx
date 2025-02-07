@@ -1,10 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
-import React from 'react';
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
-import "./User.css"; // Import custom CSS for styling
-import { MdAccountCircle } from "react-icons/md"; // Correct import for MdAccountCircle
+import "./User.css";
+import { MdAccountCircle } from "react-icons/md";
 
 const User = () => {
   const { token, backendUrl, setToken } = useContext(ShopContext);
@@ -46,10 +45,9 @@ const User = () => {
   };
 
   const fetchUserOrders = async () => {
-    const toastId = toast.loading("Loading orders..."); // Show loading toast
     try {
-      const response = await fetch(`${backendUrl}/api/user/orders`, {
-        method: "GET",
+      const response = await fetch(`${backendUrl}/api/order/userorders`, {
+        method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -58,12 +56,10 @@ const User = () => {
       if (response.ok) {
         const data = await response.json();
         setOrders(data.orders);
-        toast.success("Orders loaded successfully.", { id: toastId }); // Success toast
       } else {
         throw new Error("Failed to fetch orders.");
       }
     } catch (error) {
-      toast.error("Unable to fetch orders. Please try again.", { id: toastId }); // Error toast
       console.log(error);
     }
   };
@@ -72,7 +68,7 @@ const User = () => {
     setToken(null);
     localStorage.removeItem("token");
     toast.success("Logged out successfully.");
-    navigate("/login");
+    setTimeout(() => window.location.reload(), 0);
   };
 
   const handleSaveChanges = async () => {
@@ -81,7 +77,7 @@ const User = () => {
       return;
     }
 
-    const toastId = toast.loading("Saving changes..."); // Show loading toast
+    const toastId = toast.loading("Saving changes...");
     try {
       const response = await fetch(`${backendUrl}/api/user/update`, {
         method: "PUT",
@@ -109,7 +105,6 @@ const User = () => {
     }
   };
 
-  // Capitalize the first letter of the user's name
   const capitalizeName = (name) => {
     return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
   };
@@ -127,10 +122,20 @@ const User = () => {
               Welcome, {capitalizeName(userDetails.name)}
             </h1>
 
-            <div className="user-info">
-              <h3>Email:</h3>
-              <p>{userDetails.email}</p>
-            </div>
+            {/* Display Email or Phone, depending on what is available */}
+            {userDetails.email && !userDetails.phone && (
+              <div className="user-info">
+                <h3>Email:</h3>
+                <p>{userDetails.email}</p>
+              </div>
+            )}
+
+            {userDetails.phone && !userDetails.email && (
+              <div className="user-info">
+                <h3>Phone Number:</h3>
+                <p>{userDetails.phone}</p>
+              </div>
+            )}
 
             {isEditing && (
               <div className="edit-profile-section">
@@ -168,7 +173,7 @@ const User = () => {
                     <li key={order._id} className="order-item">
                       <p>Order ID: {order._id}</p>
                       <p>Status: {order.status}</p>
-                      <p>Total: ${order.total}</p>
+                      <p>Total: ₹{order.amount}</p>
                     </li>
                   ))}
                 </ul>

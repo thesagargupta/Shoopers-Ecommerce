@@ -2,7 +2,6 @@ import { createContext, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import React from 'react';
 
 export const ShopContext = createContext(null);
 
@@ -23,7 +22,7 @@ const ShopContextProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [token, setToken] = useState(""); // Token for authentication
   const navigate = useNavigate();
-  const backendUrl = import.meta.env.VITE_BACKEND_URL; // Backend URL from .env file
+  const backendUrl = import.meta.env.VITE_BACKEND_URL // Backend URL from .env file
 
   // Fetch products from the backend
   useEffect(() => {
@@ -231,6 +230,7 @@ const ShopContextProvider = ({ children }) => {
     token,
     backendUrl,
     saveTokenToLocalStorage,
+    SetCartItem,
   };
 
   return (

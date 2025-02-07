@@ -6,19 +6,20 @@ import Signup from "./pages/Signup";
 import About from "./pages/About";
 import User from "./pages/User";
 import Contact from "./pages/Contact";
-import Navbar from "./components/navbar/Navbar";
-import Footer from "./components/navbar/Footer";
+import Navbar from "./components/NavbarFolder/Navbar";
+import Footer from "./components/NavbarFolder/Footer";
 import Cart from "./pages/Cart";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Error from "./pages/Error";
 import "font-awesome/css/font-awesome.min.css";
 import ProductPage from "./pages/ProductPage";
-import CategoryPage from "./pages/Categorypage";
+import CategoryPage from "./pages/CategoryPage";
 import PlaceOrder from "./pages/PlaceOrder";
 import React from 'react';
 import ScrollToTop from "./pages/ScrollToTop";
 import SearchResults from "./pages/SearchResult";
 import ShopContextProvider from "./context/ShopContext"; // Import ShopContextProvider
+import Order from "./pages/Order";
 
 const App = () => {
   return (
@@ -40,6 +41,7 @@ const App = () => {
         <Route path="/category/:categoryName" element={<CategoryPage />} />
         <Route path="/place-order" element={<PlaceOrder />} />
         <Route path="/search-results" element={<SearchResults />} />
+        <Route path="/orders" element={<Order/>} />
       </Routes>
       <Footer />
     </ShopContextProvider>
